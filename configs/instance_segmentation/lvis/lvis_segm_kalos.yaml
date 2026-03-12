@@ -1,0 +1,27 @@
+cfg:
+  annotation_file: /home/david/Code/kalos/datasets/standardized_lvis_all.json
+  task: segm
+  annotation_type: coco-json
+  method: greedy
+  threshold_func: segm_iou_similarity
+  cost_func: category_lenient
+  similarity_threshold: 0.5
+  calculate_vitality: false
+  calculate_difficulty: true
+  collaboration_clusters: false
+  localization_sensitivity_thresholds:
+    - 0.1
+    - 0.2
+    - 0.3
+    - 0.4
+    - 0.5
+    - 0.6
+    - 0.7
+  output_results: /home/david/Code/kalos/results/instance_segmentation/lvis
+  plotting:
+    theme: paper
+    font_family: sans-serif
+    plot_all: true
+    output_folder: /home/david/Code/kalos/results/instance_segmentation/lvis
+    font_scale: 1.5
+    plot_format: png

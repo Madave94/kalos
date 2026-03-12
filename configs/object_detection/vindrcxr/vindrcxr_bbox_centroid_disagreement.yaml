@@ -1,0 +1,5 @@
+cfg:
+  annotation_file: /home/david/Code/kalos/datasets/vindr_cxr_standardized_train_val.json
+  output_file: /home/david/Code/kalos/results/object_detection/vindrcxr/vindrcxr_bbox_centroid_do_de.json
+  similarity_func: centroid_similarity
+  log_level: INFO

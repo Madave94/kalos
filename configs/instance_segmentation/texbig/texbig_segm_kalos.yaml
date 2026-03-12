@@ -1,0 +1,25 @@
+cfg:
+  annotation_file: /home/david/Code/kalos/datasets/texbig_standardized_train_val.json
+  task: segm
+  annotation_type: coco-json
+  method: greedy
+  threshold_func: segm_iou_similarity
+  cost_func: category_lenient
+  similarity_threshold: 0.5
+  calculate_vitality: true
+  calculate_difficulty: true
+  collaboration_clusters: true
+  localization_sensitivity_thresholds:
+    - 0.1
+    - 0.25
+    - 0.5
+    - 0.75
+    - 0.9
+  output_results: /home/david/Code/kalos/results/instance_segmentation/texbig
+  plotting:
+    theme: paper
+    font_family: sans-serif
+    plot_all: true
+    output_folder: /home/david/Code/kalos/results/instance_segmentation/texbig
+    font_scale: 1.5
+    plot_format: png

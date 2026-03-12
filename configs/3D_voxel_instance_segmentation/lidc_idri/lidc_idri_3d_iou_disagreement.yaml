@@ -1,0 +1,5 @@
+cfg:
+  annotation_file: ./datasets/lidc_idri_annotations_with_size.json
+  output_file: ./results/3D_voxel_instance_segmentation/lidc_idri/lidc_idri_3d_iou_do_de.json
+  similarity_func: 3D_IoU_similarity
+  log_level: INFO

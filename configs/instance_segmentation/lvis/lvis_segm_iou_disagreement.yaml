@@ -1,0 +1,5 @@
+cfg:
+  annotation_file: /home/david/Code/kalos/datasets/standardized_lvis_all.json
+  output_file: /home/david/Code/kalos/results/instance_segmentation/lvis/lvis_segm_iou_do_de.json
+  similarity_func: segm_iou_similarity
+  log_level: INFO

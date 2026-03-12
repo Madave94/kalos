@@ -1,0 +1,5 @@
+cfg:
+  annotation_file: /home/david/Code/kalos/datasets/texbig_standardized_train_val.json
+  output_file: /home/david/Code/kalos/results/instance_segmentation/texbig/texbig_segm_centroid_do_de.json
+  similarity_func: centroid_similarity
+  log_level: INFO

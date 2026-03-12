@@ -1,0 +1,5 @@
+cfg:
+  disagreement_files: ["/home/david/Code/kalos/results/instance_segmentation/lvis/lvis_segm_iou_do_de.json"]
+  output_dir: /home/david/Code/kalos/results/instance_segmentation/lvis
+  log_level: INFO
+  font_scale: 2.5

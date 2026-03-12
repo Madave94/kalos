@@ -1,0 +1,38 @@
+[project]
+name = "kalos"
+version = "0.7.1"
+authors = [
+  { name="David Tschirschwitz", email="david.tschirschwitz@uni.weimar.de" },
+]
+description = "Evaluation for dataset quality in computer vision."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
+dependencies = [
+	"numpy",
+	"scipy",
+	"pylibmgm",
+	"tqdm",
+	"matplotlib",
+	"shapely",
+	"pillow",
+	"scikit-image",
+	"jsonargparse[signatures]"
+]
+[dependency-groups]
+dev = [
+	"pytest"
+]
+
+[project.scripts]
+kalos = "kalos.cli:main"
+
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"

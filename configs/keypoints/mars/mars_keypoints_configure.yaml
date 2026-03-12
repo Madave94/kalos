@@ -1,0 +1,5 @@
+cfg:
+  disagreement_files: ["./results/keypoints/mars/mars_keypoints_mpjpe_do_de.json"]
+  output_dir: ./results/keypoints/mars
+  log_level: INFO
+  font_scale: 2.5
