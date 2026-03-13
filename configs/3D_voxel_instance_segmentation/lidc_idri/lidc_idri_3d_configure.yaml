@@ -1,5 +1,9 @@
 cfg:
-  disagreement_files: ["./results/3D_voxel_instance_segmentation/lidc_idri/lidc_idri_3d_iou_do_de.json"]
-  output_dir: ./results/3D_voxel_instance_segmentation/lidc_idri
+  disagreement_files: ["/home/david/Code/kalos/results/3D_voxel_instance_segmentation/lidc_idri/lidc_idri_3d_iou_do_de.json"]
   log_level: INFO
-  font_scale: 2.5
+  plot_format: png
+  plotting:
+    theme: paper
+    font_family: sans-serif
+    output_path: /home/david/Code/kalos/results/3D_voxel_instance_segmentation/lidc_idri
+    font_scale: 1.5

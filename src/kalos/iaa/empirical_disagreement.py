@@ -17,10 +17,13 @@ from kalos.correspondence.correspondence_algorithms import (
 )
 from kalos.iaa.similarity_functions import SIMILARITY_FUNCTIONS
 from kalos.utils.logging import setup_kalos_logging
+from kalos.config import EmpiricalDisagreementConfig
 
 logger = logging.getLogger(__name__)
 
+
 # --- 1. D_o and D_e Calculation ---
+
 
 def calculate_do_de(
     processed_data: Dict[int, Dict[str, Any]],
@@ -136,13 +139,7 @@ def calculate_do_de(
 
 # --- 2. Main Orchestration ---
 
-def calculate_empirical_disagreement(
-    annotation_file: str,
-    output_file: str,
-    similarity_func: str,
-    only_with_annotations: bool = False,
-    log_level: str = "INFO"
-):
+def calculate_empirical_disagreement(cfg: EmpiricalDisagreementConfig):
     """
     API-ready orchestration for empirical disagreement calculation.
 
@@ -150,26 +147,21 @@ def calculate_empirical_disagreement(
     observed and expected disagreement distributions, and exports the results.
 
     Args:
-        annotation_file (str): Path to the input JSON annotation file.
-        output_file (str): Path where the resulting JSON distribution should be saved.
-        similarity_func (str): The string identifier for the similarity function to use 
-            (e.g., 'segm_iou_similarity').
-        only_with_annotations (bool, optional): If True, filters out images that have 
-            no annotations from any rater. Defaults to False.
-        log_level (str, optional): The logging level to use. Defaults to "INFO".
+        cfg (EmpiricalDisagreementConfig): Configuration object containing 
+            paths and parameters for generating D_o and D_e distributions.
     """
-    setup_kalos_logging(log_level)
+    setup_kalos_logging(cfg.log_level)
     
     try:
-        similarity_function = SIMILARITY_FUNCTIONS[similarity_func]
+        similarity_function = SIMILARITY_FUNCTIONS[cfg.similarity_func]
     except KeyError:
-        logger.error(f"Invalid similarity function '{similarity_func}'. Available: {list(SIMILARITY_FUNCTIONS.keys())}")
+        logger.error(f"Invalid similarity function '{cfg.similarity_func}'. Available: {list(SIMILARITY_FUNCTIONS.keys())}")
         return
 
-    coco_data = load_annotations(annotation_file)
+    coco_data = load_annotations(str(cfg.annotation_file))
     processed_data = preprocess_data(coco_data)
 
-    if only_with_annotations:
+    if cfg.only_with_annotations:
         original_count = len(processed_data)
         processed_data = {
             img_id: data for img_id, data in processed_data.items()
@@ -177,13 +169,13 @@ def calculate_empirical_disagreement(
         }
         logger.info(f"Filtered out {original_count - len(processed_data)} images. Remaining: {len(processed_data)}")
 
-    logger.info(f"Calculating empirical disagreement using similarity function: '{similarity_func}'")
+    logger.info(f"Calculating empirical disagreement using similarity function: '{cfg.similarity_func}'")
     results = calculate_do_de(processed_data, similarity_function)
 
-    with open(output_file, 'w') as f:
+    with open(str(cfg.output_file), 'w') as f:
         json.dump(results, f, indent=4)
 
     logger.info(f"Successfully calculated D_o and D_e.")
     logger.info(f"   - D_o values calculated: {len(results['d_o'])}")
     logger.info(f"   - D_e values calculated: {len(results['d_e'])}")
-    logger.info(f"   - Results saved to: {output_file}")
+    logger.info(f"   - Results saved to: {cfg.output_file}")

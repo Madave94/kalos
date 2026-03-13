@@ -82,6 +82,6 @@ class EmpiricalDisagreementConfig:
 class PrincipledConfigurationConfig:
     """Configuration for deriving principled configuration."""
     disagreement_files: List[Path_fr]
-    output_dir: Path_dw
-    plotting: PlottingConfig = field(default_factory=PlottingConfig)
+    plot_format: Literal["png", "pdf"] = "png"
+    plotting: PlotSettings = field(default_factory=PlotSettings)
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"

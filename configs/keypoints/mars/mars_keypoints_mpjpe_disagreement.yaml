@@ -1,5 +1,5 @@
 cfg:
-  annotation_file: ./datasets/MARS_coco_front.json
-  output_file: ./results/keypoints/mars/mars_keypoints_mpjpe_do_de.json
+  annotation_file: /home/david/Code/kalos/datasets/MARS_coco_front.json
+  output_file: /home/david/Code/kalos/results/keypoints/mars/mars_keypoints_mpjpe_do_de.json
   similarity_func: in-mpjpe_similarity
   log_level: INFO

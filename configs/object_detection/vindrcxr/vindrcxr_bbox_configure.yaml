@@ -1,8 +1,10 @@
 cfg:
   disagreement_files: ["/home/david/Code/kalos/results/object_detection/vindrcxr/vindrcxr_bbox_iou_do_de.json",
                        "/home/david/Code/kalos/results/object_detection/vindrcxr/vindrcxr_bbox_centroid_do_de.json"]
-  output_dir: /home/david/Code/kalos/results/object_detection/vindrcxr
   log_level: INFO
+  plot_format: png
   plotting:
-    font_scale: 2.0
     theme: paper
+    font_family: sans-serif
+    output_path: /home/david/Code/kalos/results/object_detection/vindrcxr
+    font_scale: 1.5

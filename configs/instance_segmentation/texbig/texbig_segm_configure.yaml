@@ -2,6 +2,11 @@ cfg:
   disagreement_files: ["/home/david/Code/kalos/results/instance_segmentation/texbig/texbig_segm_iou_do_de.json",
                        "/home/david/Code/kalos/results/instance_segmentation/texbig/texbig_segm_giou_do_de.json",
                        "/home/david/Code/kalos/results/instance_segmentation/texbig/texbig_segm_centroid_do_de.json"]
-  output_dir: /home/david/Code/kalos/results/instance_segmentation/texbig
   log_level: INFO
-  font_scale: 2.5
+  plot_format: png
+  plotting:
+    theme: paper
+    font_family: sans-serif
+    output_path: /home/david/Code/kalos/results/instance_segmentation/texbig
+    font_scale: 1.5
+
