@@ -13,7 +13,9 @@ To use KαLOS, two requirements need to be met:
 2) Datasets should contain at least two raters for the scene/image/data(-subset) you want to evaluate. 
 Raters do not have to be human. Data can also be obtained via semi-automated labeling or auto-labeling.
 
-![kalos_processing_v4.svg](docs/assets/kalos_processing_v4.svg)
+<p align="center">
+  <img src="docs/assets/kalos_processing_v4.svg" width="100%" />
+</p>
 
 ___
 
