@@ -1,6 +1,6 @@
 [project]
 name = "kalos"
-version = "0.7.2"
+version = "0.7.3"
 authors = [
   { name="David Tschirschwitz", email="david.tschirschwitz@uni.weimar.de" },
 ]

@@ -1,5 +1,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![arXiv](https://img.shields.io/badge/arXiv-2603.27197-b31b1b.svg?logo=arxiv)](https://arxiv.org/abs/2603.27197)
 
 ___
 
