@@ -1,0 +1,10 @@
+# config.yaml example for YOLO to KaLOS-COCO converter
+cfg:
+  rater_folders:
+    - ./tests/test_yolo_to_kalos_json_sample/labeler1 # dataset path 1
+    - ./tests/test_yolo_to_kalos_json_sample/labeler2 # dataset path 2
+    - ./tests/test_yolo_to_kalos_json_sample/labeler3 # dataset path 3
+    # Add more rater folders as needed
+
+  output_path: ./results # kalos_coco_annotation.json will be saved in this directory
+  log_level: INFO

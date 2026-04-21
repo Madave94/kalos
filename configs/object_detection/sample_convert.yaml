@@ -1,0 +1,27 @@
+cfg: ## refenrence yolo_to_kalos_json_converter/sample_covert.yaml
+  annotation_file: ../../results/kalos_coco_annotation.json
+  task: bbox
+  annotation_type: coco-json
+  method: greedy
+  threshold_func: bbox_iou_similarity
+  cost_func: category_lenient
+  similarity_threshold: 0.25
+  calculate_vitality: true
+  calculate_difficulty: true
+  collaboration_clusters: true
+  only_with_instances: true
+  localization_sensitivity_thresholds:
+    - 0.1
+    - 0.175
+    - 0.25
+    - 0.375
+    - 0.5
+  output_results: ../../results/
+  plotting:
+    theme: paper
+    font_family: sans-serif
+    font_style: italic
+    plot_all: true
+    output_folder: ../../results/
+    font_scale: 1.5
+    plot_format: png

@@ -13,6 +13,7 @@ from .iaa import (
 )
 from .iaa.kalos_execution import run_kalos_pipeline
 from .iaa.plotting_execution import run_plotting_pipeline
+from .utils.yolo_to_kalos_coco import yolo_to_kalos_coco_pipeline
 
 __all__ = [
     "calculate_iaa",
@@ -21,4 +22,5 @@ __all__ = [
     "derive_principled_configuration",
     "run_kalos_pipeline",
     "run_plotting_pipeline",
+    "yolo_to_kalos_coco_pipeline"
 ]
