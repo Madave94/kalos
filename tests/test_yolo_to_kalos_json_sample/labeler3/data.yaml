@@ -1,0 +1,8 @@
+names:
+  0: Flood lv0
+  1: Flood lv1
+  2: Flood lv2
+  3: Flood lv3
+  4: Flood lv4
+path: .
+train: train.txt

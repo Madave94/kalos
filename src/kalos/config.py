@@ -89,3 +89,11 @@ class PrincipledConfigurationConfig:
     plot_format: Literal["png", "pdf"] = "png"
     plotting: PlotSettings = field(default_factory=PlotSettings)
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+
+
+@dataclass
+class YoloToKalosCOCOConfig:
+    """Configuration for YOLO to KaLOS-COCO conversion."""
+    rater_folders: List[str]
+    output_path: str
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"

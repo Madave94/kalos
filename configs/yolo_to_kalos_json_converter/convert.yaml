@@ -1,0 +1,10 @@
+# config.yaml example for YOLO to KaLOS-COCO converter
+cfg:
+  rater_folders: # data.yaml file is needed for class sturcture ...
+    - /data/annotations/rater1 # dataset path 1
+    - /data/annotations/rater2 # dataset path 2
+    # Add more rater folders as needed
+    # plz reference the sample_convert.yaml
+
+  output_path: /data/output
+  log_level: INFO
