@@ -59,6 +59,7 @@ def run_plotting_pipeline(cfg: KaLOSProjectConfig):
             font_family=s.font_family or cfg.plotting.font_family,
             font_name=s.font_name or cfg.plotting.font_name,
             font_scale=s.font_scale or cfg.plotting.font_scale,
+            font_style=s.font_style or cfg.plotting.font_style,
             overrides=s.color_overrides or cfg.plotting.color_overrides
         )
         path = s.output_path or os.path.join(output_folder, f"alpha_distribution.{plot_fmt}")
@@ -72,6 +73,7 @@ def run_plotting_pipeline(cfg: KaLOSProjectConfig):
             font_family=s.font_family or cfg.plotting.font_family,
             font_name=s.font_name or cfg.plotting.font_name,
             font_scale=s.font_scale or cfg.plotting.font_scale,
+            font_style=s.font_style or cfg.plotting.font_style,
             overrides=s.color_overrides or cfg.plotting.color_overrides
         )
         # Mean Heatmap
@@ -89,6 +91,7 @@ def run_plotting_pipeline(cfg: KaLOSProjectConfig):
             font_family=s.font_family or cfg.plotting.font_family,
             font_name=s.font_name or cfg.plotting.font_name,
             font_scale=s.font_scale or cfg.plotting.font_scale,
+            font_style=s.font_style or cfg.plotting.font_style,
             overrides=s.color_overrides or cfg.plotting.color_overrides
         )
         # JSON keys are strings, convert back to float
@@ -106,6 +109,7 @@ def run_plotting_pipeline(cfg: KaLOSProjectConfig):
             font_family=s.font_family or cfg.plotting.font_family,
             font_name=s.font_name or cfg.plotting.font_name,
             font_scale=s.font_scale or cfg.plotting.font_scale,
+            font_style=s.font_style or cfg.plotting.font_style,
             overrides=s.color_overrides or cfg.plotting.color_overrides
         )
         path = s.output_path or os.path.join(output_folder, f"annotator_vitality.{plot_fmt}")
@@ -119,6 +123,7 @@ def run_plotting_pipeline(cfg: KaLOSProjectConfig):
             font_family=s.font_family or cfg.plotting.font_family,
             font_name=s.font_name or cfg.plotting.font_name,
             font_scale=s.font_scale or cfg.plotting.font_scale,
+            font_style=s.font_style or cfg.plotting.font_style,
             overrides=s.color_overrides or cfg.plotting.color_overrides
         )
         path = s.output_path or os.path.join(output_folder, f"class_difficulty.{plot_fmt}")
