@@ -34,7 +34,7 @@ class ThemeManager:
         # Initialize with 'paper' defaults
         self.apply("paper")
 
-    def apply(self, theme_name: str = "paper", font_family: str = "serif", font_name: Optional[str] = None, font_scale: float = 1.0, overrides: Optional[Dict[str, str]] = None):
+    def apply(self, theme_name: str = "paper", font_family: str = "serif", font_name: Optional[str] = None, font_scale: float = 1.0, overrides: Optional[Dict[str, str]] = None, font_style: Optional[str] = 'normal'):
         """Sets the global style and registers colormaps."""
         self.font_scale = font_scale
         
@@ -48,6 +48,7 @@ class ThemeManager:
         plt.rcParams.update({
             'font.family': font_family,
             'font.size': 12 * font_scale,
+            'font.style': font_style,
             'pdf.fonttype': 42, 
             'ps.fonttype': 42
         })

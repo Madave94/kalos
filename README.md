@@ -71,6 +71,11 @@ KαLOS evaluation follows four steps. A general example looks like:
 ```
     kalos plot --config path/to/config/file.yaml
 ```
+5) (Optional) YOLO format to kalos json
+```
+    kalos convert-yolo --config path/to/config/file.yaml
+```
+
 
 **Note on Portability:** All paths in YAML configs are relative to the config file itself (this comes from the jsonargparse design). 
 You can move config folders together with datasets and results without breaking the pipeline.
@@ -90,7 +95,7 @@ calculating this for three different functions:
     kalos calc-disagreement --config configs/instance_segmentation/texbig/texbig_segm_iou_disagreement.yaml
     kalos calc-disagreement --config configs/instance_segmentation/texbig/texbig_segm_giou_disagreement.yaml
 ```
-4. Run principled configuration:
+1. Run principled configuration:
 ```
     kalos configure --config configs/instance_segmentation/texbig/texbig_segm_configure.yaml
 ```
@@ -99,12 +104,12 @@ provides information as to which of these functions is the best separator.
 **Note**: To stay consistent with existing work, the disagreement evaluation requires a distance function, while the remaining
 pipeline uses a similarity function. The functions are mostly the same as $d=1-s$ and vice-versa. Keep this
 in mind when you select the threshold values. Logging will explicitly hint you towards this.
-5. Run KαLOS execution:
+1. Run KαLOS execution:
 ```
     kalos execute --config configs/instance_segmentation/texbig/texbig_segm_kalos.yaml
 ```
 After the run finishes, the results are stored in `results/instance_segmentation/texbig`.
-6. Plot the results:
+1. Plot the results:
 ```
     kalos plot --config configs/instance_segmentation/texbig/texbig_segm_kalos.yaml
 ```
@@ -118,6 +123,22 @@ This creates the plot used in chapter 14.1 in the CVPR paper.
 Instead of `kalos`, you can also call `/src/kalos/cli.py`. The same entrypoint is used.
 </details>
 
+<details>
+<summary>Example convert Yolo format to kalos json & execute</summary>
+
+example of:
+```
+kalos convert-yolo --config configs/yolo_to_kalos_json_converter/sample_covert.yaml 
+```
+
+example of execute bbox k-a, and visualization:
+```
+kalos execute --config configs/object_detection/sample_convert.yaml
+```
+```
+kalos plot --config configs/object_detection/sample_convert.yaml
+```
+</details>
 
 <details>
 <summary>API usage example</summary>
@@ -143,6 +164,7 @@ Currently KαLOS supports the following tasks with the following similarity or d
 Besides the regular information in your annotation, data should contain two additional pieces of information:
 1) `rater_id` inside each annotation, specifying the responsible rater.
 2) `rater_list` inside the image/scene, specifying the raters assigned to a specific image/scene.
+
 
 <details>
 <summary>Show format example</summary>

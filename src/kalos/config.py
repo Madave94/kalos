@@ -16,6 +16,7 @@ class PlotSettings:
     font_scale: Optional[float] = None
     font_family: Optional[str] = None
     font_name: Optional[str] = None
+    font_style: Optional[str] = None
     theme: Optional[str] = None
     color_overrides: Optional[Dict[str, str]] = None
 
@@ -30,6 +31,7 @@ class PlottingConfig:
     font_scale: float = 1.0
     font_family: str = "serif"
     font_name: Optional[str] = None
+    font_style: Optional[str] = "normal"
     theme: str = "paper"
     color_overrides: Optional[Dict[str, str]] = None
 
@@ -86,4 +88,12 @@ class PrincipledConfigurationConfig:
     disagreement_files: List[Path_fr]
     plot_format: Literal["png", "pdf"] = "png"
     plotting: PlotSettings = field(default_factory=PlotSettings)
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+
+
+@dataclass
+class YoloToKalosCOCOConfig:
+    """Configuration for YOLO to KaLOS-COCO conversion."""
+    rater_folders: List[str]
+    output_path: str
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
