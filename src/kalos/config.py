@@ -24,7 +24,7 @@ class PlottingConfig:
     """Global plotting configuration with per-plot overrides."""
     plot_all: bool = False
     output_folder: Optional[Path_dw] = None
-    plot_format: Literal["png", "pdf"] = "png"
+    plot_format: Literal["png", "pdf", "svg"] = "png"
     
     # Global Defaults
     font_scale: float = 1.0
