@@ -178,7 +178,22 @@ Images:
 <details>
 <summary>Show YOLO format example</summary>
 
-todo
+Standard YOLO format does not support Rater IDs. To use YOLO with KaLOS natively, structure your dataset by annotator:
+
+```text
+dataset_root/
+├── rater1/
+│   ├── image1.txt
+│   └── image2.txt
+├── rater2/
+│   ├── image1.txt
+│   └── image3.txt
+└── data.yaml  (Optional: defines category names)
+```
+
+**Important Notes for YOLO:**
+*   **Missing vs. Empty Files:** If `image1.txt` is an empty file in `rater1/`, it means Rater 1 found **0 objects**. If `image3.txt` is completely missing from `rater1/`, it means Rater 1 was **not assigned** that image.
+*   **Distance Metrics Warning:** YOLO uses relative coordinates (`[0, 1]`) without storing image dimensions. While this works perfectly for scale-invariant metrics like **IoU** and **GIoU**, distance-based metrics (like **Centroid Distance** or **MPJPE**) will mathematically distort the distance on non-square images. For precise distance metrics on non-square datasets, use the COCO-JSON format.
 
 </details>
 
