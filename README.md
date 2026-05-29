@@ -71,10 +71,6 @@ KαLOS evaluation follows four steps. A general example looks like:
 ```
     kalos plot --config path/to/config/file.yaml
 ```
-5) (Optional) YOLO format to kalos json
-```
-    kalos convert-yolo --config path/to/config/file.yaml
-```
 
 
 **Note on Portability:** All paths in YAML configs are relative to the config file itself (this comes from the jsonargparse design). 
@@ -124,27 +120,10 @@ Instead of `kalos`, you can also call `/src/kalos/cli.py`. The same entrypoint i
 </details>
 
 <details>
-<summary>Example convert Yolo format to kalos json & execute</summary>
-
-example of:
-```
-kalos convert-yolo --config configs/yolo_to_kalos_json_converter/sample_covert.yaml 
-```
-
-example of execute bbox k-a, and visualization:
-```
-kalos execute --config configs/object_detection/sample_convert.yaml
-```
-```
-kalos plot --config configs/object_detection/sample_convert.yaml
-```
-</details>
-
-<details>
 <summary>API usage example</summary>
   
 If you want to include KαLOS into an existing library, the core function to call is `calculate_iaa` in `src/kalos/core.py`.
-You will likely need to combine this with the preprocessing from `preprocess_data` in `src/kalos/correspondence/correspondence_algorithms.py`,
+You will likely need to combine this with the unified `load_and_preprocess_data` function in `src/kalos/utils/data_loading.py`,
 which provides you information about the data structure you need to input for KαLOS.
 </details>
 
@@ -167,9 +146,9 @@ Besides the regular information in your annotation, data should contain two addi
 
 
 <details>
-<summary>Show format example</summary>
+<summary>Show COCO-JSON format example</summary>
 
-For the COCO-JSON format currently present in the code, data might look like:
+For the COCO-JSON format currently present in the code, data is stored in a single `*.json` which looks like:
 
 Annotations:
 ```
@@ -197,6 +176,13 @@ Images:
 </details>
 
 <details>
+<summary>Show YOLO format example</summary>
+
+todo
+
+</details>
+
+<details>
 <summary>Extending to new tasks</summary>
 
 This is advanced functionality. It requires adding a new similarity function. You should install the repository in
@@ -209,6 +195,22 @@ KaLOS is built on a Hexagonal architecture, making it easy to add new geometric 
 3. **Registry:** Add your metric to the `SIMILARITY_FUNCTIONS` registry.
 
 The core math engine will automatically pick up your new metric for all agreement tiers.
+
+</details>
+
+___
+
+## Common Mistakes
+
+<details>
+<summary>Absolute or relative coordinates</summary>
+
+In general calculations should be done on relative coordinates as this is necessary to run the expected and observed
+disagreement, which compares different images/scenes with each other. All original similarity functions are prepared to
+recieve normalized coordinates. The normalization (or unification) is done during data preparation in `data_loading.py`.
+
+If you need to use absolute coordinates, only use them for the calculation of the agreement. You will need to add own
+data loading and similarity functions in this case.
 
 </details>
 

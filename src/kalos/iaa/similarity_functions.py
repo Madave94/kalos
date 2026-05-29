@@ -118,7 +118,8 @@ def centroid_similarity(ann1: Dict[str, Any], ann2: Dict[str, Any]) -> float:
     x1, y1, w1, h1 = bbox1
     x2, y2, w2, h2 = bbox2
 
-    # Calculate centroids
+    # Calculate centroids, normalize by the image specific width and height as for the
+    # d_o vs d_e we compare different images.
     c1_x, c1_y = x1 + w1 / 2, y1 + h1 / 2
     c2_x, c2_y = x2 + w2 / 2, y2 + h2 / 2
 
@@ -506,7 +507,7 @@ def mask_to_array(seg, width, height):
 def segm_3d_iou_similarity(ann1: Dict[str, Any], ann2: Dict[str, Any], grid_size=(128, 128, 128)) -> float:
     """
     Calculates the 3D Intersection over Union (IoU) similarity between two voxelized
-    objects from relative coordinates.
+    objects from relative coordinates (moved into a universal space e.g. 128x128x128).
 
     The function assumes input coordinates ('z_position' and 'points') are relative,
     i.e., in the range [0, 1]. It scales these coordinates to a discrete voxel grid of
