@@ -14,48 +14,11 @@ from kalos.iaa.core import calculate_iaa
 from kalos.config import KaLOSProjectConfig
 from kalos.utils.logging import setup_kalos_logging
 from kalos.utils.export_utils import export_iaa_results
+from kalos.utils.data_loading import load_and_preprocess_data
 
 logger = logging.getLogger(__name__)
 
-# --- 1. Data Layer Orchestration ---
-def load_and_preprocess_data(annotation_file: Path, annotation_type: str):
-    """Loads and preprocesses data based on annotation type. Decoupled from Config object."""
-    if annotation_type == 'coco-json':
-        coco_data = correspondence_algorithms.load_annotations(annotation_file)
-        categories = {cat["id"]: cat["name"] for cat in coco_data["categories"]}
-        processed_data = correspondence_algorithms.preprocess_data(coco_data)
-        
-        # Derive all_raters from the processed data to capture session-aware identities
-        all_raters_set = set()
-        for img_data in processed_data.values():
-            all_raters_set.update(img_data['rater_list'])
-        all_raters = sorted(list(all_raters_set))
-        
-        return {
-            "processed_data": processed_data,
-            "categories": categories,
-            "all_raters": all_raters
-        }
-    elif annotation_type == 'lidc-idri-json':
-        annotation_data = correspondence_algorithms.load_annotations(annotation_file)
-        processed_data = correspondence_algorithms.preprocess_data(annotation_data)
-        
-        # Consistent derivation for LIDC
-        all_raters_set = set()
-        for img_data in processed_data.values():
-            all_raters_set.update(img_data['rater_list'])
-        all_raters = sorted(list(all_raters_set))
-
-        return {
-            "processed_data": processed_data,
-            "categories": {},
-            "all_raters": all_raters
-        }
-    else:
-        raise ValueError(f"Unsupported annotation type: {annotation_type}")
-
-
-# --- 2. Main Execution Orchestrator ---
+# --- Main Execution Orchestrator ---
 def run_kalos_pipeline(cfg: KaLOSProjectConfig):
     """
     Orchestrates the main mathematical evaluation pipeline for KaLOS.

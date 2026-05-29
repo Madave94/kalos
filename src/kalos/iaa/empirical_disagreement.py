@@ -11,13 +11,12 @@ from typing import Dict, List, Any, Callable
 from tqdm import tqdm
 
 from kalos.correspondence.correspondence_algorithms import (
-    preprocess_data,
-    load_annotations,
     precompute_pairwise_scores,
 )
 from kalos.iaa.similarity_functions import SIMILARITY_FUNCTIONS
 from kalos.utils.logging import setup_kalos_logging
 from kalos.config import EmpiricalDisagreementConfig
+from kalos.utils.data_loading import load_and_preprocess_data
 
 logger = logging.getLogger(__name__)
 
@@ -158,8 +157,8 @@ def calculate_empirical_disagreement(cfg: EmpiricalDisagreementConfig):
         logger.error(f"Invalid similarity function '{cfg.similarity_func}'. Available: {list(SIMILARITY_FUNCTIONS.keys())}")
         return
 
-    coco_data = load_annotations(cfg.annotation_file)
-    processed_data = preprocess_data(coco_data)
+    data_package = load_and_preprocess_data(cfg.annotation_file, cfg.annotation_type)
+    processed_data = data_package["processed_data"]
 
     if cfg.only_with_annotations:
         original_count = len(processed_data)

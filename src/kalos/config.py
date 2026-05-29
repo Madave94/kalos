@@ -5,7 +5,7 @@ ensuring clean separation between user input and internal execution logic.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Literal, Dict
+from typing import List, Optional, Literal, Dict, Union
 from jsonargparse.typing import Path_fr, Path_dw, Path_fc
 
 @dataclass
@@ -46,13 +46,13 @@ class PlottingConfig:
 @dataclass
 class KaLOSProjectConfig:
     """Master configuration for the KaLOS agreement pipeline (Math + Visuals)."""
-    annotation_file: Path_fr
+    annotation_file: Union[Path_fr, Path_dw]
     task: Literal['bbox', 'segm', '3D_VIS', 'keypoints']
     method: str
     threshold_func: str
     cost_func: str
     similarity_threshold: float
-    annotation_type: Literal['coco-json', 'lidc-idri-json'] = "coco-json"
+    annotation_type: Literal['coco-json', 'lidc-idri-json', 'yolo'] = "coco-json"
     only_with_instances: bool = False
 
     # Downstream Analysis Flags
@@ -75,9 +75,10 @@ class KaLOSProjectConfig:
 @dataclass
 class EmpiricalDisagreementConfig:
     """Configuration for calculating observed and expected disagreement."""
-    annotation_file: Path_fr
+    annotation_file: Union[Path_fr, Path_dw]
     output_file: Path_fc
     similarity_func: str
+    annotation_type: Literal['coco-json', 'lidc-idri-json', 'yolo'] = "coco-json"
     only_with_annotations: bool = False
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
 
@@ -86,14 +87,6 @@ class EmpiricalDisagreementConfig:
 class PrincipledConfigurationConfig:
     """Configuration for deriving principled configuration."""
     disagreement_files: List[Path_fr]
-    plot_format: Literal["png", "pdf"] = "png"
+    plot_format: Literal["png", "pdf", "svg"] = "png"
     plotting: PlotSettings = field(default_factory=PlotSettings)
-    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
-
-
-@dataclass
-class YoloToKalosCOCOConfig:
-    """Configuration for YOLO to KaLOS-COCO conversion."""
-    rater_folders: List[str]
-    output_path: str
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"

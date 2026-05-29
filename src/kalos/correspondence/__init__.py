@@ -6,8 +6,6 @@ from .correspondence_algorithms import (
     MATCHING_FUNCTIONS,
     THRESHOLD_FUNCTIONS,
     COST_FUNCTIONS,
-    load_annotations,
-    preprocess_data,
 )
 
 __all__ = [
@@ -18,6 +16,4 @@ __all__ = [
     "MATCHING_FUNCTIONS",
     "THRESHOLD_FUNCTIONS",
     "COST_FUNCTIONS",
-    "load_annotations",
-    "preprocess_data",
 ]

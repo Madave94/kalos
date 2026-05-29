@@ -1,6 +1,6 @@
 [project]
 name = "kalos"
-version = "0.7.4"
+version = "0.8.0"
 authors = [
   { name="David Tschirschwitz", email="david.tschirschwitz@uni.weimar.de" },
 ]
@@ -15,16 +15,18 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Image Recognition",
 ]
 dependencies = [
-	"numpy",
-	"scipy",
-	"pylibmgm",
-	"tqdm",
-	"matplotlib",
-	"shapely",
-	"pillow",
-	"scikit-image",
-	"jsonargparse[signatures]"
+        "numpy",
+        "scipy",
+        "pylibmgm",
+        "tqdm",
+        "matplotlib",
+        "shapely",
+        "pillow",
+        "scikit-image",
+        "jsonargparse[signatures]",
+        "PyYAML"
 ]
+
 [dependency-groups]
 dev = [
 	"pytest"

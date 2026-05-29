@@ -18,224 +18,14 @@ from typing import Dict, List, Any, Tuple, Callable
 from pathlib import Path
 
 from kalos.iaa.similarity_functions import SIMILARITY_FUNCTIONS
+from kalos.utils.data_loading import load_annotations, preprocess_data
 import pylibmgm
 
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
-# --- 1. Annotation Loader ---
-def load_annotations(file_path: Path) -> Dict[str, Any]:
-    """
-    Loads a COCO-style JSON annotation file.
-
-    Args:
-        file_path (Path): The path to the JSON annotation file.
-
-    Returns:
-        Dict[str, Any]: The loaded annotation data as a Python dictionary.
-    """
-    logger.info(f"Loading annotations from: {file_path}")
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-    logger.debug("Annotations loaded successfully.")
-    return data
-
-# --- 2. Data Pre-processing ---
-def _preprocess_coco(coco_data: Dict[str, Any]) -> Dict[int, Dict[str, Any]]:
-    """
-    Pre-processes raw COCO data to group annotations by image and then by rater.
-    Supports both standard List rater_list and Dict session-based rater_list.
-
-    This function restructures the data to make it easier to access all annotations
-    for a specific image, subdivided by the annotator who created them.
-
-    Args:
-        coco_data (Dict[str, Any]): The raw data loaded from the COCO-style JSON file.
-
-    Returns:
-        Dict[int, Dict[str, Any]]: A dictionary where each key is an `image_id`.
-        The value is another dictionary containing the image's 'file_name',
-        'rater_list', and a dictionary of 'annotations_by_rater'.
-    """
-    processed_data = {}
-
-    # First, create a base structure for each image
-    image_id_map = {img['id']: img for img in coco_data['images']}
-    for image_id, img_info in image_id_map.items():
-        if "rater_list" not in img_info:
-            raise ValueError(f"Image {image_id} missing mandatory attribute 'rater_list'.")
-        
-        raw_list = img_info['rater_list']
-        
-        # Branch 1: Standard List format
-        if isinstance(raw_list, list):
-            flattened_list = raw_list
-            image_session_mode = False
-        # Branch 2: Dictionary session format
-        elif isinstance(raw_list, dict):
-            # Flatten dict { "Rater": [1, 2] } into ["Rater (S1)", "Rater (S2)"]
-            flattened_list = []
-            for rater_id, sessions in raw_list.items():
-                for s_id in sessions:
-                    flattened_list.append(f"{rater_id} (S{s_id})")
-            image_session_mode = True
-        else:
-            raise TypeError(f"Invalid rater_list type for image {image_id}. Expected list or dict.")
-
-        processed_data[image_id] = {
-            'file_name': img_info['file_name'],
-            'rater_list': flattened_list,
-            'is_session_mode': image_session_mode,
-            'annotations_by_rater': defaultdict(list)
-        }
-
-    # Now, populate the structure with annotations
-    for ann in coco_data['annotations']:
-        image_id = ann['image_id']
-        if image_id not in processed_data:
-            continue
-            
-        img_meta = image_id_map[image_id]
-        width, height = img_meta['width'], img_meta['height']
-        
-        if "rater_id" not in ann:
-            raise ValueError(f"Annotation {ann.get('id')} missing mandatory attribute 'rater_id'.")
-
-        # Handle Identity Transformation
-        rater_id = ann['rater_id']
-        if processed_data[image_id]['is_session_mode']:
-            s_id = ann.get('session_id')
-            if s_id is None:
-                raise ValueError(f"Session-mode detected for image {image_id}, but annotation {ann.get('id')} is missing 'session_id'.")
-            # Map to the flattened identity
-            internal_identity = f"{rater_id} (S{s_id})"
-            # Update the annotation object to reflect its virtual session identity
-            ann['rater_id'] = internal_identity
-        else:
-            internal_identity = rater_id
-
-        # Relative coordinate conversion (bbox)
-        if "bbox" in ann:
-            bbox = ann['bbox']
-            bbox[0] /= width
-            bbox[1] /= height
-            bbox[2] /= width
-            bbox[3] /= height
-        # Relative coordinate conversion (segmentation)
-        if "segmentation" in ann:
-            ann['segmentation'] = [
-                [
-                    coord / width if i % 2 == 0 else coord / height
-                    for i, coord in enumerate(polygon)
-                ]
-                for polygon in ann['segmentation']
-            ]
-        if "keypoints" in ann:
-            # normalize coco keypoints
-            keypoints = ann['keypoints']
-            # keypoints are xyv, where v is visibility.
-            # v=0: not labeled (x=y=0), v=1: labeled but not visible, v=2: labeled and visible
-            for i in range(0, len(keypoints), 3):
-                if keypoints[i+2] > 0: # only normalize labeled keypoints
-                    keypoints[i] /= width
-                    keypoints[i+1] /= height
-
-        # Only add if the rater/session is in the assigned list for this image
-        if internal_identity in processed_data[image_id]['rater_list']:
-            processed_data[image_id]['annotations_by_rater'][internal_identity].append(ann)
-            
-    return processed_data
-
-def _preprocess_lidc_idri_data(lidc_idri_data: Dict[str, Any]) -> Dict[int, Dict[str, Any]]:
-    """
-    Pre-processes raw LIDC-IDRI data into the internal standardized format.
-
-    Args:
-        lidc_idri_data (Dict[str, Any]): Raw LIDC-IDRI dictionary.
-
-    Returns:
-        Dict[int, Dict[str, Any]]: Preprocessed data structure compatible with KaLOS.
-    """
-    preprocess_data = {}
-
-    for study_instance_uid, values in lidc_idri_data.items():
-        # don't use case id, it is sometimes used multiple times
-        preprocess_data[study_instance_uid] = {
-            "file_name": values["file_paths"][0], # only first file extracted
-            "rater_list": list(values["annotators"].keys()),
-            "annotations_by_rater": defaultdict(list)
-        }
-
-    # second pass
-    max_z = {}
-    min_z = {}
-    for study_instance_uid, values in lidc_idri_data.items():
-        max_z[study_instance_uid] = float("-inf")
-        min_z[study_instance_uid] = float("inf")
-        for rater_id, annotations in values["annotators"].items():
-            for annotation in annotations:
-                for contour in annotation["contours"]:
-                    max_z[study_instance_uid] = max(max_z[study_instance_uid], float(contour["z_position"]))
-                    min_z[study_instance_uid] = min(min_z[study_instance_uid], float(contour["z_position"]))
-
-    ann_id = 0
-    # third pass populate the dictonary with annotations
-    for study_instance_uid, values in lidc_idri_data.items():
-        width, height, depth = values["width"], values["height"], values["depth"]
-        z_range = max_z[study_instance_uid] - min_z[study_instance_uid]
-        for rater_id, annotations in values["annotators"].items():
-            # create empty dict
-            preprocess_data[study_instance_uid]["annotations_by_rater"][rater_id] = []
-            # fill with annotation data
-            for annotation in annotations:
-                for contour in annotation["contours"]:
-                    if z_range > 0:
-                        contour["z_position"] = (float(contour["z_position"]) - min_z[study_instance_uid]) / z_range
-                    else:
-                        contour["z_position"] = 0.0
-                    contour["points"] = [[point[0] / width, point[1] / height] for point in contour["points"]]
-                    assert 0 <= contour["z_position"] <= 1.0
-                    assert all(0 <= x <= 1 for row in contour["points"] for x in row)
-                ann = {"category_id": 1, "segmentation_3d": annotation["contours"], "id": ann_id, "rater_id": rater_id}
-                ann_id += 1
-                preprocess_data[study_instance_uid]["annotations_by_rater"][rater_id].append(
-                    ann
-                )
-
-    return preprocess_data
-
-def preprocess_data(annotation_data: Dict[str, Any]) -> Dict[int, Dict[str, Any]]:
-    """
-    Pre-processes raw annotation data to group annotations by image and then by rater.
-
-    This function inspects the data format and dispatches to the appropriate
-    pre-processing function. Currently supports COCO and LIDC-IDRI formats.
-
-    Args:
-        annotation_data (Dict[str, Any]): The raw data loaded from the JSON file.
-
-    Returns:
-        Dict[int, Dict[str, Any]]: A dictionary where each key is an `image_id`.
-        The value is another dictionary containing the image's 'file_name',
-        'rater_list', and a dictionary of 'annotations_by_rater'.
-    """
-    logger.info("Preprocessing data...")
-
-    # --- Data Format Dispatcher ---
-    # Check for a key that is highly specific to the COCO format.
-    if 'images' in annotation_data and 'annotations' in annotation_data:
-        logger.debug("   - Detected COCO data format.")
-        processed_data = _preprocess_coco(annotation_data)
-    elif len(annotation_data) > 0 and "case_id" in next(iter(annotation_data.values())) and "study_instance_uid" in next(iter(annotation_data.values())):
-        processed_data = _preprocess_lidc_idri_data(annotation_data)
-    else:
-        raise NotImplementedError("Unsupported data format. Only COCO-style JSON is currently supported.")
-
-    logger.debug(f"Preprocessing complete. Found data for {len(processed_data)} images.")
-    return processed_data
-
-# --- 3. Precompute Pairwise Scores ---
+# --- 1. Precompute Pairwise Scores ---
 def precompute_pairwise_scores(
         image_data: Dict[str, Any],
         threshold_func: Callable,
@@ -268,7 +58,7 @@ def precompute_pairwise_scores(
                     pairwise_scores[key] = (score, ann1, ann2) # Store score and anns
     return pairwise_scores
 
-# --- 4. Cost and Threshold Functions ---
+# --- 2. Cost and Threshold Functions ---
 
 THRESHOLD_FUNCTIONS = {
     "bbox_iou_similarity": SIMILARITY_FUNCTIONS["bbox_iou_similarity"],
@@ -284,7 +74,7 @@ COST_FUNCTIONS = {
     "category_lenient": lambda score, ann1, ann2: -score - 1.0 if ann1.get('category_id') == ann2.get('category_id') else -score,
 }
 
-# --- 5. Instance Correspondence Matching Functions ---
+# --- 3. Instance Correspondence Matching Functions ---
 def match_greedy(
         image_data: Dict[str, Any],
         pairwise_scores: Dict[Tuple[int, int], Tuple[float, Dict, Dict]],
@@ -930,7 +720,7 @@ MATCHING_FUNCTIONS = {
     'mgm': match_mgm,
 }
 
-# --- 6. Main Orchestration Function ---
+# --- 4. Main Orchestration Function (stand-alone testing) ---
 
 def main(args: argparse.Namespace):
     """

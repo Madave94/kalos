@@ -1,7 +1,7 @@
 from .logging import setup_kalos_logging, TqdmLoggingHandler
 from .export_utils import export_iaa_results
 from .theme_manager import theme_manager, PROJECT_COLORS_HEX
-from .yolo_to_kalos_coco import yolo_to_kalos_coco_pipeline
+from .data_loading import load_and_preprocess_data
 
 __all__ = [
     "setup_kalos_logging",
@@ -9,5 +9,5 @@ __all__ = [
     "export_iaa_results",
     "theme_manager",
     "PROJECT_COLORS_HEX",
-    "yolo_to_kalos_coco_pipeline"
+    "load_and_preprocess_data"
 ]
